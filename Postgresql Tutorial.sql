@@ -107,4 +107,70 @@ select "ArtistId" From "Artist"
 union all
 select "ArtistId" From "Album";
 
+-----------------------------------------------------
+-----------  Create, Alter, Drop --------------------
+-----------------------------------------------------
 
+-- sampleDatabase1 adlı bir database oluşturmak için aşağıdaki kod çalıştırılır.
+Create DATABASE sampleDatabase1;
+
+-- Create Table
+Create TABLE companies
+(
+    ID INT,
+    NAME char(60),
+    AGE INT,
+    ADDRESS char(50),
+    Price REAL
+);
+
+Create Table depatmant
+(
+    ID int,
+    name char(60),
+    description char(200)
+);
+
+Create table employes
+(
+    ID INTEGER,
+    NAME char varying(60),
+    BIRTHDATE date,
+    IsCurrentEmployee bit(1)
+);
+
+Create table customers
+(
+    NAME char varying(60),
+    BIRTHDATE date,
+    ZipCode char(50)
+);
+
+-- Invoice tablosunun içerisinde BillingCity sütununda a ile başlayan kayıtları getirerek bu kayıtlardan adı table_from_query olan
+-- bir tablo oluştur.
+Create table table_from_query as (select * from "Invoice" where "BillingCity" Ilike 'a%') with data;
+
+-- Yukarıdaki tablo aynı tablo yapısını data olmadan oluşturur çünkü sorgu sonunda with no data ibaresi mevcuttur.
+Create table table_from_query_2 as (select  * from "Invoice" where "BillingCity" ILIKE  'a%') with no data;
+
+-- Serial tipi otomatik artan demektir. Id gibi primary key alanlarda kullanılır.
+Create Table company
+(
+    ID serial,
+    name char(60),
+    description char(200)
+);
+
+insert into company(name, description) values ('Beko','Bir beyaz eşya mağazasıdır.');
+insert into company(name, description) values ('Arçelik','Bir beyaz eşya mağazasıdır.');
+
+-- Son oluşturulan id'yi verir.
+select currval(pg_get_serial_sequence('company','id'));
+
+select * from company;
+
+SELECT * From companies;
+
+
+-- Drop silme işlemi yapmak için kullanılır.
+Drop table company;
