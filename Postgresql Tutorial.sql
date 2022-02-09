@@ -171,6 +171,137 @@ select * from company;
 
 SELECT * From companies;
 
-
 -- Drop silme işlemi yapmak için kullanılır.
 Drop table company;
+
+-- Sequence
+-- bir unique otomatik artan anahtar oluştururken kullanılır.
+CREATE SEQUENCE demotable_id_seq;
+
+CREATE TABLE Deneme
+(
+    id integer default nextval('demotable_id_seq'),
+    name char(50)
+);
+
+insert into deneme(name) values('nursena');
+
+select * from deneme;
+
+-- Geçici Tablo Oluşturmak
+
+-- Select Into ile
+-- Üzerinde çalışacağımız bir veri seti yaratmak istediğimizde ve ana tabloyu meşgul etmek istemediğimizde kullanılabilir.
+-- Oturum kapandığı zaman bu geçici tablolar silinecektir ve bunlar diskte tutulmaz.
+select "FirstName","LastName","Address"
+Into Table customer_backup
+from "Customer"
+Where "FirstName" ILIKE 'f%'
+order by  "LastName" asc;
+
+-- Select into temp ile
+select "BillingCity","BillingAddress","Total"
+into temp table invoice_backup
+from "Invoice"
+where "Total" > 10 and "BillingCity" ILIKE 'a%'
+order by "BillingCity" asc ;
+
+-- Create Temp Table ile
+-- Bu geçici tablonun yukarıdaki ikisinden farkı fiziksel tablo gibi olması.
+-- Aynı isimde bir gerçek bir de geçici tablo oluşturulabilir fakat önerilmez.
+-- Aynı isimde bir gerçek bir de geçici tablo oluşturduğumuz zaman aksiyonlar geçici tablo üzerinden akar örneğin bir kayıt
+-- eklediğimizde geçici tabloya eklenir veya sildiğimizde geçici tablodan silinir. Tabloyu tamamen silmek istediğimiz zaman
+-- geçici tablo silinir. Örneği aşağıdaki sql sorgularında mevcuttur.
+
+Create Table test1
+(
+  id serial,
+  ad varchar,
+  soyad varchar
+);
+
+Create Temp Table test1
+(
+ id serial,
+ ad varchar,
+ soyad varchar
+);
+
+insert into test1(ad,soyad) values('musa','kucuk');
+drop table test1;
+select * from test1;
+
+-- ALTER
+
+Create Table test1
+(
+  id serial,
+  ad varchar,
+  soyad varchar
+);
+
+Alter table test1 add gender varchar; --tabloya gender adında yeni bir sütun eklendi.
+select * from test1;
+Alter table test1 drop gender; -- toblodan gender adında sütun silindi.
+select * from test1;
+Alter table test1 rename to test_bir; -- tablonun adı test_bir olarak değiştirildi.
+select * from test_bir;
+Alter table test_bir rename column ad to first_name; -- tablo içerisinde bir sütunun adını değiştirmek için kullanılır.
+select * from test_bir;
+Alter table test_bir add column tc_no char(11) not null;
+insert into test_bir(first_name, soyad, tc_no) values('musa','kucuk','513333263');
+
+-- Drop Table
+
+Drop table test_bir;
+Drop table test_bir,deneme;
+Drop table if exists olmayan_bir_tablo; -- Eğer tablo var ise siler. Daha sağlıklı bir sorgudur. Çünkü olmayan tabloyu silmekten
+                                        -- çıkan hataların önüne geçer.
+Create DATABASE silmek_icin;
+Drop database if exists silmek_icin;
+
+-- Select, Insert, Update, Delete
+
+Create table if not exists mahkumlar
+(
+    id serial,
+    name varchar,
+    surname varchar
+);
+
+insert into mahkumlar(name, surname) values('musa','kucuk'),('ali','urban'); -- Birden fazla insert işlemi yapmak için kullanılır.
+select * from mahkumlar;
+
+Update mahkumlar SET name = 'Hayri' Where name = 'musa';
+Update mahkumlar Set name = 'mandaline' Where name = 'nursena';
+select  * from mahkumlar_backup;
+
+Delete from mahkumlar_backup; -- Where anahtar sözcüğü olmadan bu sorgu tavsiye edilmez.
+Delete from mahkumlar_backup where id=1;
+
+-- Check constraint
+
+Create table if not exists countries
+(
+    country_id  varchar(2),
+    country_name varchar(40) check (country_name notnull),
+    region_id int
+);
+
+insert into countries(country_id, country_name, region_id) values('TR',null,22); -- country_name sütunu null olamaz.
+
+-- Numeric constraint
+
+Create Table If NOT EXISTS vatandaslar
+(
+    TC_NO    varchar primary key check ( length(TC_NO) = 11 ),
+    Ad       varchar,
+    Soyad    varchar,
+    Cinsiyet bit
+);
+
+Alter table vatandaslar alter column tc_no type varchar;
+insert into vatandaslar(TC_NO, Ad, Soyad) values('12345678900','Erhan','Taş');
+insert into vatandaslar(TC_NO, Ad, Soyad) values('1234567890','Erol','Taş'); -- bu kayıt gerçekleşmeyecektir çünkü tc kimlik no 11 karakter değildir.
+select * from vatandaslar;
+
