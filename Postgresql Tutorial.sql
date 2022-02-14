@@ -14,12 +14,11 @@ select "Name","Composer" From "Track"
 order by  "Name" asc , "Composer" desc;
 
 -- DISTINCT
--- distinct gelen kayıtları tekilleştirir.
+-- distinct gelen kayıtları tekilleştirir. Unique hale getirir.
 select DISTINCT "FirstName" from "Customer"
 order by "FirstName" asc;
 
 -- GROUP BY
-
 select "Title",count("Title") From "Employee"
 group by ("Title") order by count("Title") desc;
 
@@ -66,7 +65,7 @@ order by "CustomerId" asc;
 
 select "FirstName",concat('Adınız ',length("FirstName"),' karakter içeriyor.') AS uzunluk From "Customer";
 
---Concat_ws (Concat with a seperator)
+-- Concat_ws (Concat with a seperator)
 -- iki veri arasına aldığı ilk parametreyi vererek birleştirme işlemini yapar.
 select  concat_ws(',',"FirstName","LastName") as full_name
 from "Customer" order by "FirstName" asc;
