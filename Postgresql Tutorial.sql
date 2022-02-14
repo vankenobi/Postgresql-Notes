@@ -304,3 +304,59 @@ insert into vatandaslar(TC_NO, Ad, Soyad) values('12345678900','Erhan','Taş');
 insert into vatandaslar(TC_NO, Ad, Soyad) values('1234567890','Erol','Taş'); -- bu kayıt gerçekleşmeyecektir çünkü tc kimlik no 11 karakter değildir.
 select * from vatandaslar;
 
+-- Örnekler
+Create table if not exists jobs
+(
+    id serial,
+    name varchar(50),
+    surname varchar(50),
+    min_salary decimal(6,0) default 1000,
+    max_salary decimal(6,0) default 6000,
+    current_salary decimal(6,0) not null check ( current_salary between min_salary and max_salary)
+);
+
+Drop table if exists jobs;
+insert into jobs values (default,'musa','kucuk',default,default,2000);
+select * from jobs;
+
+-- Primary Key ve Foreign Key
+
+Create table if not exists Cars
+(
+    id serial unique not null PRIMARY KEY ,
+    name varchar(60) not null
+);
+
+Create table if not exists Cars_Detail
+(
+    id serial not null unique primary key ,
+    car_id int not null references Cars(id), -- Bu tabloda yukarıdaki tablodaki her bir arabanın detayları tutulur ve bu tablodaki car_id sütunu referans olarak yukarıdaki tablonun id sütununu gösterir.
+    horse_power numeric not null ,
+    miles numeric not null
+);
+
+DROP table cars_detail;
+
+
+-- Inner Join (En sık kullanılan join tipidir. iki tablodaki ortak olan sütunlardaki kayıtları getirir.)
+
+select "FirstName", "LastName", "BillingAddress", "BillingCity"
+from "Invoice" as i
+inner join "Customer" as c on i."CustomerId" = c."CustomerId";
+
+
+select "LastName","FirstName","Title","Address","City" from "Employee";
+select "Email","Phone" from "Customer";
+
+Select c."FirstName","Title",c."Address",c."City",c."Email",c."Phone" -- Eğer bir alan iki tabloda da var ise bunu hangi tablodan alacağını belirtmeliyiz.
+From "Customer" as c
+INNER JOIN  "Employee" as e
+on c."SupportRepId" = e."EmployeeId";
+
+-- Aşağıdaki sorguda olduğu gibi 2den fazla tabloyu bağlayabilir ve kayıt çekebiliriz.
+Select c."FirstName","Title",c."Address",c."City",c."Email",c."Phone",i."BillingAddress"
+From "Customer" as c
+INNER JOIN  "Employee" as e
+    on c."SupportRepId" = e."EmployeeId"
+INNER JOIN  "Invoice" as i
+    on c."CustomerId" = i."CustomerId";
